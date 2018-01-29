@@ -1,15 +1,20 @@
 {
-    "name": "debox/jwt-auth",
-    "description": "plugin jwt authentication support.",
-    "type": "october-plugin",
-    "require": {
-        "tymon/jwt-auth": "^1.0.0-rc.1",
-        "composer/installers": "~1.0"
-    },
-    "authors": [
-        {
-            "name": "Nurdiansyah",
-            "email": "nur.diansyah.ckt@gmail.com"
-        }
-    ]
+  "name": "debox/jwt-auth",
+  "description": "plugin jwt authentication support.",
+  "type": "october-plugin",
+  "require": {
+    "tymon/jwt-auth": "^1.0.0-rc.1",
+    "october/rain": "~1.0",
+    "october/system": "~1.0",
+    "october/backend": "~1.0",
+    "october/cms": "~1.0",
+    "lcobucci/jwt": "^3.2",
+    "composer/installers": "~1.0"
+  },
+  "authors": [
+    {
+      "name": "Nurdiansyah",
+      "email": "nur.diansyah.ckt@gmail.com"
+    }
+  ]
 }

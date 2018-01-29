@@ -1,5 +1,8 @@
-<?php namespace debox\auth\jwt;
+<?php namespace Debox\Auth\Jwt;
 
+use Debox\Auth\Providers\Jwt\Lcobucci;
+use Lcobucci\JWT\Builder as JWTBuilder;
+use Lcobucci\JWT\Parser as JWTParser;
 use Tymon\JWTAuth\Blacklist;
 use Tymon\JWTAuth\Console\JWTGenerateSecretCommand;
 use Tymon\JWTAuth\Contracts\Providers\Auth;
@@ -22,7 +25,6 @@ use Tymon\JWTAuth\JWTGuard;
 use Tymon\JWTAuth\Contracts\Providers\JWT as JWTContract;
 use Tymon\JWTAuth\Claims\Factory as ClaimFactory;
 use Tymon\JWTAuth\Manager;
-use Tymon\JWTAuth\Providers\JWT\Namshi;
 use Tymon\JWTAuth\Validators\PayloadValidator;
 
 
@@ -141,8 +143,7 @@ class Plugin extends PluginBase {
         $this->app->alias('jwt', JWT::class);
         $this->app->alias('jwt.auth', JWTAuth::class);
         $this->app->alias('jwt.provider.jwt', JWTContract::class);
-        $this->app->alias('jwt.provider.jwt.namshi', Namshi::class);
-//        $this->app->alias('jwt.provider.jwt.lcobucci', Lcobucci::class);
+        $this->app->alias('jwt.provider.jwt.lcobucci', Lcobucci::class);
         $this->app->alias('jwt.provider.auth', Auth::class);
         $this->app->alias('jwt.provider.storage', Storage::class);
         $this->app->alias('jwt.manager', Manager::class);
@@ -152,15 +153,29 @@ class Plugin extends PluginBase {
     }
 
     private function registerJWTProvider() {
+        $this->registerLcobucciProvider();
         $this->app->singleton('jwt.provider.jwt', function () {
-            $provider = $this->config('providers.jwt');
-            return new $provider(
-                $this->config('jwt.secret'),
-                $this->config('jwt.algo'),
-                $this->config('jwt.keys')
+            return $this->getConfigInstance('providers.jwt');
+        });
+    }
+
+    /**
+     * Register the bindings for the Lcobucci JWT provider.
+     *
+     * @return void
+     */
+    private function registerLcobucciProvider() {
+        $this->app->singleton('jwt.provider.jwt.lcobucci', function ($app) {
+            return new Lcobucci(
+                new JWTBuilder(),
+                new JWTParser(),
+                $this->config('secret'),
+                $this->config('algo'),
+                $this->config('keys')
             );
         });
     }
+
 
     /**
      * Register the bindings for the Auth provider.
@@ -190,7 +205,7 @@ class Plugin extends PluginBase {
      * @return void
      */
     private function registerManager() {
-        $this->app->singleton('tymon.jwt.manager', function ($app) {
+        $this->app->singleton('jwt.manager', function ($app) {
             $instance = new Manager(
                 $app['jwt.provider.jwt'],
                 $app['jwt.blacklist'],
