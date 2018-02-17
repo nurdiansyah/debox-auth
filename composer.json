@@ -4,12 +4,16 @@
   "type": "october-plugin",
   "require": {
     "tymon/jwt-auth": "^1.0.0-rc.1",
+    "lcobucci/jwt": "^3.2",
+    "composer/installers": "~1.0"
+  },
+  "require-dev": {
     "october/rain": "~1.0",
     "october/system": "~1.0",
     "october/backend": "~1.0",
     "october/cms": "~1.0",
-    "lcobucci/jwt": "^3.2",
-    "composer/installers": "~1.0"
+    "phpunit/phpunit": "~6.4",
+    "phpunit/phpunit-selenium": "^4.1"
   },
   "authors": [
     {

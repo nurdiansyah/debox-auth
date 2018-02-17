@@ -1,18 +1,17 @@
-<?php namespace Debox\Auth\Jwt;
+<?php namespace Debox\Auth;
 
+use Debox\Auth\Console\JWTGenerateSecretCommand;
+use Debox\Auth\Models\User;
 use Debox\Auth\Providers\Jwt\Lcobucci;
+use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\App;
 use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\Parser as JWTParser;
 use Tymon\JWTAuth\Blacklist;
-use Tymon\JWTAuth\Console\JWTGenerateSecretCommand;
-use Tymon\JWTAuth\Contracts\Providers\Auth;
+use Tymon\JWTAuth\Contracts\Providers\Auth as AuthProvider;
 use Tymon\JWTAuth\Contracts\Providers\Storage;
 use Tymon\JWTAuth\Factory;
-use Tymon\JWTAuth\Http\Middleware\Authenticate;
-use Tymon\JWTAuth\Http\Middleware\AuthenticateAndRenew;
-use Tymon\JWTAuth\Http\Middleware\Check;
 use System\Classes\PluginBase;
-use Tymon\JWTAuth\Http\Middleware\RefreshToken;
 use Tymon\JWTAuth\Http\Parser\AuthHeaders;
 use Tymon\JWTAuth\Http\Parser\Cookies;
 use Tymon\JWTAuth\Http\Parser\InputSource;
@@ -21,7 +20,6 @@ use Tymon\JWTAuth\Http\Parser\QueryString;
 use Tymon\JWTAuth\Http\Parser\RouteParams;
 use Tymon\JWTAuth\JWT;
 use Tymon\JWTAuth\JWTAuth;
-use Tymon\JWTAuth\JWTGuard;
 use Tymon\JWTAuth\Contracts\Providers\JWT as JWTContract;
 use Tymon\JWTAuth\Claims\Factory as ClaimFactory;
 use Tymon\JWTAuth\Manager;
@@ -32,31 +30,10 @@ use Tymon\JWTAuth\Validators\PayloadValidator;
  * Graphql Plugin Information File
  */
 class Plugin extends PluginBase {
+    public $require = ['RainLab.User', 'Debox.Graphql'];
     /**
      * @var \Illuminate\Auth\AuthManager
      */
-    private $auth;
-
-    /**
-     * The middleware aliases.
-     *
-     * @var array
-     */
-    protected $middlewareAliases = [
-        'jwt.auth' => Authenticate::class,
-        'jwt.check' => Check::class,
-        'jwt.refresh' => RefreshToken::class,
-        'jwt.renew' => AuthenticateAndRenew::class,
-    ];
-
-    /**
-     * Plugin constructor.
-     */
-    public function __construct($application) {
-        parent::__construct($application);
-        $this->auth = $this->app['auth'];
-    }
-
 
     /**
      * Returns information about this plugin.
@@ -65,11 +42,39 @@ class Plugin extends PluginBase {
      */
     public function pluginDetails() {
         return [
-            'name' => 'Auth-JWT',
+            'name' => 'Auth',
             'description' => 'Authentication JWT(Json Web Token)',
             'author' => 'Debox',
             'icon' => 'icon-leaf'
         ];
+    }
+
+    /**
+     * Boot method, called right before the request route.
+     *
+     * @return void
+     */
+    public function boot() {
+        $path = realpath(__DIR__ . '/config/config.php');
+        $this->publishes([$path => config_path('jwt.php')], 'config');
+        $this->mergeConfigFrom($path, 'jwt');
+        $this->app->bind(\Illuminate\Auth\AuthManager::class, function ($app) {
+            return new \Illuminate\Auth\AuthManager($app);
+        });
+
+        $facade = AliasLoader::getInstance();
+        $facade->alias('JWTAuth', '\Tymon\JWTAuth\Facades\JWTAuth');
+        $facade->alias('JWTFactory', '\Tymon\JWTAuth\Facades\JWTFactory');
+        App::singleton('auth', function ($app) {
+            return new \Illuminate\Auth\AuthManager($app);
+        });
+        $this->app['router']->middleware('jwt.auth', '\Tymon\JWTAuth\Middleware\GetUserFromToken');
+        $this->app['router']->middleware('jwt.refresh', '\Tymon\JWTAuth\Middleware\RefreshToken');
+        User::extend(function ($model) {
+            $model->addDynamicMethod('getAuthApiAttributes', function () {
+                return [];
+            });
+        });
     }
 
     /**
@@ -96,55 +101,12 @@ class Plugin extends PluginBase {
         $this->registerJWTCommand();
     }
 
-    /**
-     * Boot method, called right before the request route.
-     *
-     * @return void
-     */
-    public function boot() {
-        $path = realpath(__DIR__ . '/../config/config.php');
-
-        $this->publishes([$path => config_path('jwt.php')], 'config');
-        $this->mergeConfigFrom($path, 'jwt');
-
-        $this->aliasMiddleware();
-
-        $this->extendAuthGuard();
-    }
-
-    /**
-     * Alias the middleware.
-     *
-     * @return void
-     */
-    private function aliasMiddleware() {
-        $router = $this->app['router'];
-
-        $method = method_exists($router, 'aliasMiddleware') ? 'aliasMiddleware' : 'middleware';
-
-        foreach ($this->middlewareAliases as $alias => $middleware) {
-            $router->$method($alias, $middleware);
-        }
-    }
-
-    private function extendAuthGuard() {
-        $this->auth->extend('jwt', function ($app, $name, array $config) {
-            $guard = new JWTGuard($app['jwt'],
-                $app['auth']->createUserProvider($config['provider']),
-                $app['request']
-            );
-
-            $app->refresh('request', $guard, 'setRequest');
-            return $guard;
-        });
-    }
-
     private function registerAliases() {
         $this->app->alias('jwt', JWT::class);
         $this->app->alias('jwt.auth', JWTAuth::class);
         $this->app->alias('jwt.provider.jwt', JWTContract::class);
         $this->app->alias('jwt.provider.jwt.lcobucci', Lcobucci::class);
-        $this->app->alias('jwt.provider.auth', Auth::class);
+        $this->app->alias('jwt.provider.auth', AuthProvider::class);
         $this->app->alias('jwt.provider.storage', Storage::class);
         $this->app->alias('jwt.manager', Manager::class);
         $this->app->alias('jwt.blacklist', Blacklist::class);
