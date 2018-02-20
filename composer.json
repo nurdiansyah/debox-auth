@@ -3,11 +3,15 @@
   "description": "plugin jwt authentication support.",
   "type": "october-plugin",
   "require": {
+    "debox/graphql": "dev-master",
+    "rainlab/user-plugin": "dev-master",
     "tymon/jwt-auth": "^1.0.0-rc.1",
     "lcobucci/jwt": "^3.2",
     "composer/installers": "~1.0"
   },
   "require-dev": {
+    "fzaninotto/faker": "~1.7",
+    "laravel/framework": "5.5.*",
     "october/rain": "~1.0",
     "october/system": "~1.0",
     "october/backend": "~1.0",
@@ -20,5 +24,23 @@
       "name": "Nurdiansyah",
       "email": "nur.diansyah.ckt@gmail.com"
     }
-  ]
+  ],
+  "autoload-dev": {
+    "psr-4": {
+      "Backend\\": "modules/backend",
+      "CMS\\": "modules/cms",
+      "System\\": "modules/system",
+      "Debox\\Graphql\\": "plugins/debox/graphql"
+    }
+  },
+  "archive": {
+    "exclude": [
+      "/tests"
+    ]
+  },
+  "scripts": {
+    "test": [
+      "./vendor/bin/phpunit"
+    ]
+  }
 }

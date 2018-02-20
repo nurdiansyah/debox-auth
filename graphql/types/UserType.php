@@ -2,6 +2,7 @@
 
 namespace debox\auth\graphql\types;
 
+use Debox\Auth\Models\User;
 use Debox\Graphql\Relay\Type\NodeType;
 use GraphQL\Type\Definition\Type;
 
@@ -22,10 +23,6 @@ class UserType extends NodeType {
                 'type' => Type::string(),
                 'description' => 'name user.'
             ],
-            'password' => [
-                'type' => Type::string(),
-                'description' => 'password user.'
-            ],
             'address' => [
                 'type' => Type::string(),
                 'description' => 'Address user.'
@@ -38,6 +35,6 @@ class UserType extends NodeType {
     }
 
     public function resolveById($id) {
-        // TODO: Implement resolveById() method.
+        return User::query()->where('id', $id)->first();
     }
 }

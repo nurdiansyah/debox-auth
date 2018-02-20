@@ -4,7 +4,6 @@ use Debox\Auth\Console\JWTGenerateSecretCommand;
 use Debox\Auth\Models\User;
 use Debox\Auth\Providers\Jwt\Lcobucci;
 use Illuminate\Foundation\AliasLoader;
-use Illuminate\Support\Facades\App;
 use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\Parser as JWTParser;
 use Tymon\JWTAuth\Blacklist;
@@ -65,7 +64,7 @@ class Plugin extends PluginBase {
         $facade = AliasLoader::getInstance();
         $facade->alias('JWTAuth', '\Tymon\JWTAuth\Facades\JWTAuth');
         $facade->alias('JWTFactory', '\Tymon\JWTAuth\Facades\JWTFactory');
-        App::singleton('auth', function ($app) {
+        $this->app->singleton('auth', function ($app) {
             return new \Illuminate\Auth\AuthManager($app);
         });
         $this->app['router']->middleware('jwt.auth', '\Tymon\JWTAuth\Middleware\GetUserFromToken');

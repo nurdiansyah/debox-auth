@@ -2,10 +2,11 @@
 
 namespace debox\auth\graphql\types;
 
+use Debox\Auth\Models\UserGroup;
 use Debox\Graphql\Relay\Type\NodeType;
 use GraphQL\Type\Definition\Type;
 
-class GroupType extends NodeType {
+class UserGroupType extends NodeType {
     protected $attributes = [
         'name' => 'GroupUser',
         'description' => 'Group user.'
@@ -22,6 +23,6 @@ class GroupType extends NodeType {
     }
 
     public function resolveById($id) {
-        // TODO: Implement resolveById() method.
+        UserGroup::query()->where('id', $id)->first();
     }
 }
