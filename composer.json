@@ -1,5 +1,5 @@
 {
-  "name": "debox/jwt-auth",
+  "name": "debox/auth",
   "description": "plugin jwt authentication support.",
   "type": "october-plugin",
   "require": {
