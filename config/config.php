@@ -220,7 +220,7 @@ return [
 
         'users' => [
             'driver' => 'eloquent',
-            'model' => Debox\Auth\Models\User::class,
+            'model' => RainLab\User\Models\User::class,
         ]
     ],
     /*

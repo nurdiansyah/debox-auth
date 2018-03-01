@@ -2,9 +2,9 @@
 
 namespace debox\auth\graphql\types;
 
-use Debox\Auth\Models\User;
 use Debox\Graphql\Relay\Type\NodeType;
 use GraphQL\Type\Definition\Type;
+use RainLab\User\Models\User;
 
 class UserType extends NodeType {
     protected $attributes = [

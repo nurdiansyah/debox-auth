@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "73e3c1143e8b8c695a253df1abf3d7af",
+    "content-hash": "d6bfc5db52f10d1eeb6185add73b10a6",
     "packages": [
         {
             "name": "composer/installers",
@@ -132,12 +132,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/nurdiansyah/debox-graphql.git",
-                "reference": "9eb2133e1357d30a5f0703366be6a4ce3993ae02"
+                "reference": "8afcb5991813e2e6f7d37c55b02cccf75a532455"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nurdiansyah/debox-graphql/zipball/9eb2133e1357d30a5f0703366be6a4ce3993ae02",
-                "reference": "9eb2133e1357d30a5f0703366be6a4ce3993ae02",
+                "url": "https://api.github.com/repos/nurdiansyah/debox-graphql/zipball/8afcb5991813e2e6f7d37c55b02cccf75a532455",
+                "reference": "8afcb5991813e2e6f7d37c55b02cccf75a532455",
                 "shasum": ""
             },
             "require": {
@@ -163,7 +163,7 @@
                 }
             ],
             "description": "plugin graphql for octobercms.",
-            "time": "2018-02-20T08:33:43+00:00"
+            "time": "2018-02-27T09:42:46+00:00"
         },
         {
             "name": "doctrine/inflector",

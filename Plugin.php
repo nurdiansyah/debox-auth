@@ -1,11 +1,11 @@
 <?php namespace Debox\Auth;
 
 use Debox\Auth\Console\JWTGenerateSecretCommand;
-use Debox\Auth\Models\User;
 use Debox\Auth\Providers\Jwt\Lcobucci;
 use Illuminate\Foundation\AliasLoader;
 use Lcobucci\JWT\Builder as JWTBuilder;
 use Lcobucci\JWT\Parser as JWTParser;
+use RainLab\User\Models\User;
 use Tymon\JWTAuth\Blacklist;
 use Tymon\JWTAuth\Contracts\Providers\Auth as AuthProvider;
 use Tymon\JWTAuth\Contracts\Providers\Storage;
