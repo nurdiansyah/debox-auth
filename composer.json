@@ -3,7 +3,7 @@
   "description": "plugin jwt authentication support.",
   "type": "october-plugin",
   "require": {
-    "debox/graphql": "dev-master",
+    "debox/graphql": "dev-develop",
     "rainlab/user-plugin": "dev-master",
     "tymon/jwt-auth": "^1.0.0-rc.1",
     "lcobucci/jwt": "^3.2",
